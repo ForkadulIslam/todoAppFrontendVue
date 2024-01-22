@@ -2,6 +2,14 @@
     <div>
         <h2>Todo List</h2>
         <router-link to="/create">Create Todo</router-link>
+        <div>
+            <label for="statusFilter">Filter by Status:</label>
+            <select class="status_dropdown" v-model="selectedStatus" id="statusFilter" @change="fetchTodos">
+                <option value="">All</option>
+                <option value="Completed">Completed</option>
+                <option value="Incomplete">Incomplete</option>
+            </select>
+        </div>
         <table class="todo-table">
             <thead>
             <tr>
@@ -41,10 +49,14 @@
         data() {
             return {
                 todos: [],
+                selectedStatus: '',
             };
         },
         mounted() {
             this.fetchTodos(); // Fetch todos when the component is mounted
+        },
+        watch: {
+            selectedStatus: 'fetchTodos', // Watch for changes in selectedStatus and trigger fetchTodos
         },
         methods: {
             getStatusClass(status) {
@@ -53,11 +65,14 @@
                     incomplete: status === 'Incomplete',
                 };
             },
+
             async fetchTodos() {
                 try {
-                    const response = await axios.get(api_base_url + '/todo');
-
-                    // Update the todos data with the response
+                    const response = await axios.get(api_base_url + '/todo', {
+                        params: {
+                            status: this.selectedStatus,
+                        },
+                    });
                     this.todos = response.data;
                 } catch (error) {
                     console.error('Error fetching todos:', error);
@@ -65,10 +80,7 @@
             },
             async removeTodo(todoId) {
                 try {
-                    // Make a DELETE request to remove the todo by ID
                     await axios.delete(`${api_base_url}/todo/${todoId}`);
-
-                    // Remove the todo from the local todos array
                     this.todos = this.todos.filter(todo => todo.id !== todoId);
                 } catch (error) {
                     console.error('Error removing todo:', error);
@@ -79,6 +91,9 @@
 </script>
 
 <style scoped>
+    .status_dropdown{
+        margin-top: 20px;
+    }
     .todo-table {
         width: 100%;
         border-collapse: collapse;
@@ -105,12 +120,12 @@
         text-decoration: none;
     }
     .completed {
-        color: #4caf50; /* Green color for completed tasks */
+        color: #4caf50;
         font-weight: bold;
     }
 
     .incomplete {
-        color: #ff9800; /* Orange color for incomplete tasks */
+        color: #ff9800;
         font-weight: bold;
     }
 </style>

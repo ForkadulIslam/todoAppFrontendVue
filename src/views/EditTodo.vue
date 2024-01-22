@@ -47,7 +47,7 @@
                     title: '',
                     description: '',
                     due_date: '',
-                    status: 'Incomplete', // Default status
+                    status: 'Incomplete',
                 },
                 errors: {},
                 loading: false,
@@ -69,24 +69,21 @@
             },
             async updateTodo() {
                 try {
-                    this.loading = true; // Set loading to true during the request
+                    this.loading = true;
 
                     const todoId = this.$route.params.id;
                     const response = await axios.put(`${api_base_url}/todo/${todoId}`, this.todo);
-
-                    // Redirect to the dashboard after updating the todo
                     this.$router.push('/');
 
-                    console.log(response.data); // You can handle the successful response here
+                    console.log(response.data);
                 } catch (error) {
                     if (error.response.status === 422) {
-                        // Update the errors data with the validation errors from the server
                         this.errors = error.response.data.errors;
                     } else {
                         console.error('Error updating todo:', error);
                     }
                 } finally {
-                    this.loading = false; // Set loading back to false, whether the request succeeds or encounters an error
+                    this.loading = false;
                 }
             },
         },

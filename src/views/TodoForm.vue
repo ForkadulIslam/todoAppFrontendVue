@@ -54,21 +54,18 @@
                         description: this.description,
                         due_date: this.dueDate,
                     });
-
-                    // Clear the form fields and errors
                     this.title = '';
                     this.description = '';
                     this.dueDate = '';
                     this.errors = {};
-                    // Redirect to the dashboard
                     this.$router.push('/');
-                    console.log(response.data); // You can handle the successful response here
+                    console.log(response.data);
                 } catch (error) {
                     if (error.response.status === 422) {
                         this.errors = error.response.data.errors;
                     }
                 } finally {
-                    this.loading = false; // Set loading back to false, whether the request succeeds or fails
+                    this.loading = false;
                 }
             },
         },
